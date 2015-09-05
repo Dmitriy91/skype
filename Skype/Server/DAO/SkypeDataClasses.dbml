@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="D:\STEP ACEDAMY\C#\MYWPFPROJECTSDBOPRODUCT\SERVER\DAO\SKYPEDATABASE.MDF" Class="SkypeDataClassesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=DIMA-PC;Initial Catalog=&quot;D:\STEP ACEDAMY\C#\MYWPFPROJECTSDBOPRODUCT\SERVER\DAO\SKYPEDATABASE.MDF&quot;;Integrated Security=True" SettingsObjectName="SkypeServer.Properties.Settings" SettingsPropertyName="D__STEP_ACEDAMY_C__MYWPFPROJECTSDBOPRODUCT_SERVER_DAO_SKYPEDATABASE_MDFConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.[User]" Member="Users">
+    <Type Name="User">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Login" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="Char(64) NOT NULL" CanBeNull="false" />
+      <Column Name="RegistrationDate" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="ImageName" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
+      <Association Name="User_Contact" Member="Contacts" ThisKey="UserID" OtherKey="UserID" Type="Contact" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Contact" Member="Contacts">
+    <Type Name="Contact">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ContactID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="User_Contact" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Function Name="dbo.SP_User_INS" Method="SP_User_INS">
+    <Parameter Name="UserID" Parameter="userID" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Parameter Name="Login" Parameter="login" Type="System.String" DbType="NVarChar(30)" />
+    <Parameter Name="Email" Parameter="email" Type="System.String" DbType="NVarChar(30)" />
+    <Parameter Name="Password" Parameter="password" Type="System.String" DbType="NVarChar(64)" />
+    <Parameter Name="RegistrationDate" Parameter="registrationDate" Type="System.DateTime" DbType="Date" />
+    <Parameter Name="ImageName" Parameter="imageName" Type="System.String" DbType="NVarChar(16)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_Authenticate" Method="SP_Authenticate">
+    <Parameter Name="Login" Parameter="login" Type="System.String" DbType="NVarChar(30)" />
+    <Parameter Name="Password" Parameter="password" Type="System.String" DbType="Char(64)" />
+    <ElementType Name="SP_AuthenticateResult">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Login" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="ImageName" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_Contact_INS" Method="SP_Contact_INS">
+    <Parameter Name="UserID" Parameter="userID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="ContactID" Parameter="contactID" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_Contact_SEL_byLogin" Method="SP_Contact_SEL_byLogin">
+    <Parameter Name="Login" Parameter="login" Type="System.String" DbType="NVarChar(30)" />
+    <ElementType Name="SP_Contact_SEL_byLoginResult">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Login" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="ImageName" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_Contact_SEL_byUserID" Method="SP_Contact_SEL_byUserID">
+    <Parameter Name="UserID" Parameter="userID" Type="System.Int32" DbType="Int" />
+    <ElementType Name="SP_Contact_SEL_byUserIDResult">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="Login" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="ImageName" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_ContactIDList_SEL_byUserID" Method="SP_ContactIDList_SEL_byUserID">
+    <Parameter Name="UserID" Parameter="userID" Type="System.Int32" DbType="Int" />
+    <ElementType Name="SP_ContactIDList_SEL_byUserIDResult">
+      <Column Name="ContactID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_ContactList_SEL_byUserID" Method="SP_ContactList_SEL_byUserID">
+    <Parameter Name="UserID" Parameter="userID" Type="System.Int32" DbType="Int" />
+    <ElementType Name="SP_ContactList_SEL_byUserIDResult">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="Login" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="ImageName" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.SP_ContactPair_DEL" Method="SP_ContactPair_DEL">
+    <Parameter Name="UserID" Parameter="userID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="ContactID" Parameter="contactID" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.SP_Register" Method="SP_Register">
+    <Parameter Name="Login" Parameter="login" Type="System.String" DbType="NVarChar(30)" />
+    <Parameter Name="Email" Parameter="email" Type="System.String" DbType="VarChar(30)" />
+    <Parameter Name="Password" Parameter="password" Type="System.String" DbType="Char(64)" />
+    <Parameter Name="ImageName" Parameter="imageName" Type="System.String" DbType="NVarChar(16)" />
+    <Return Type="System.Int32" />
+  </Function>
+</Database>

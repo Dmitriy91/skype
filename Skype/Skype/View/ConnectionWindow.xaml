@@ -1,0 +1,45 @@
+﻿<Window x:Class="Skype.View.ConnectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Name="ServerIPWin"
+        Title="Server IP"
+        Background="#00aff0" 
+        WindowStyle="ToolWindow" 
+        ResizeMode="NoResize" 
+        VerticalAlignment="Center" 
+        HorizontalAlignment="Center" 
+        WindowStartupLocation="CenterScreen" 
+        FocusManager.FocusedElement="{Binding ElementName=IPTextBox}" 
+        Height="120" 
+        Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="23"/>
+            <RowDefinition Height="23"/>
+            <RowDefinition Height="33"/>
+        </Grid.RowDefinitions>
+        <TextBlock Name ="loginErrorMessage" 
+                   Text="{Binding IPErrorMessage, Mode=OneWay}"  
+                   HorizontalAlignment="Stretch" 
+                   Margin="15,0" 
+                   Foreground="Red" 
+                   FontSize="12" />
+        <TextBox Name="IPTextBox" 
+                 Text="{Binding IP, UpdateSourceTrigger=PropertyChanged}" 
+                 Grid.Row="1"  
+                 HorizontalContentAlignment="Center" 
+                 HorizontalAlignment="Center" 
+                 Height="23" 
+                 TextWrapping="Wrap" 
+                 VerticalAlignment="Center" 
+                 Width="260"/>
+        <Button  Command="{Binding SubmitCommand, Mode=OneWay}"
+                 IsDefault="True" 
+                 Name="submitButton"
+                 Content="SUBMIT"
+                 HorizontalAlignment="Center" 
+                 Grid.Row="2" 
+                 VerticalAlignment="Bottom"  
+                 Width="75"/>
+    </Grid>
+</Window>

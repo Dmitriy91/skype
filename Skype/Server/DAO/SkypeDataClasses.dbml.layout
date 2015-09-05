@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="SkypeDataClasses">
+  <DataContextMoniker Name="/SkypeDataClassesDataContext" />
+  <nestedChildShapes>
+    <classShape Id="cd249f13-5049-45ec-a0fa-0a455d183bed" absoluteBounds="0.5, 1.75, 2, 1.9631982421875">
+      <DataClassMoniker Name="/SkypeDataClassesDataContext/User" />
+      <nestedChildShapes>
+        <elementListCompartment Id="a841f2c2-b69d-4111-be5b-79eb056b9cc7" absoluteBounds="0.51500000000000012, 2.21, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="a3ab2a79-942f-406a-bf85-7816a57f14e9" absoluteBounds="3.375, 2.375, 2, 1.1939925130208333">
+      <DataClassMoniker Name="/SkypeDataClassesDataContext/Contact" />
+      <nestedChildShapes>
+        <elementListCompartment Id="7d5caf98-2fef-4cc6-9fed-e6ad18330a4e" absoluteBounds="3.39, 2.835, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.5 : 2.97199625651042); (3.375 : 2.97199625651042)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/SkypeDataClassesDataContext/User/User_Contact" />
+      <nodes>
+        <classShapeMoniker Id="cd249f13-5049-45ec-a0fa-0a455d183bed" />
+        <classShapeMoniker Id="a3ab2a79-942f-406a-bf85-7816a57f14e9" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

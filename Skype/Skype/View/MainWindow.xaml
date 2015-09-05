@@ -1,0 +1,322 @@
+﻿<Window x:Class="Skype.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        Icon="../Resources/Img/Skype-icon.png"
+        Title="Skype" 
+        Height="600" 
+        MinHeight="600" 
+        Width="800" MinWidth="800" 
+        Loaded="Window_Loaded" 
+        WindowStartupLocation="CenterScreen"
+        Closing="Window_Closing">
+    <Window.Resources> 
+        <DataTemplate x:Key="ContactLBItemTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Rectangle Margin="5,5,5,5" RadiusX="25" RadiusY="25" Width="50" Height="50">
+                    <Rectangle.Fill>
+                        <ImageBrush x:Name="avatar" ImageSource="{Binding AvatarBytes, Mode=OneWay}"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <Rectangle VerticalAlignment="Bottom" 
+                           Margin="-25,0,0,5" 
+                           RadiusX="10" 
+                           RadiusY="10" 
+                           Width="20" 
+                           Height="20" 
+                           Stroke="#7DBC00" 
+                           StrokeThickness="3">
+                    <Rectangle.Fill>
+                        <ImageBrush x:Name="statusLogo" ImageSource="{Binding StatusLogoBytes, Mode=OneWay}"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <StackPanel>
+                    <TextBlock Text="{Binding Login, Mode=OneWay}" FontWeight="Medium"/>
+                    <TextBlock Text="{Binding Email, Mode=OneWay}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SearchLBItemTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Rectangle  Margin="5,0,5,5" RadiusX="25" RadiusY="25" Width="50" Height="50">
+                    <Rectangle.Fill>
+                        <ImageBrush x:Name="statusLogo" ImageSource="{Binding AvatarBytes, Mode=OneWay}"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <StackPanel>
+                    <TextBlock Text="{Binding Login, Mode=OneWay}" FontWeight="Medium"/>
+                    <TextBlock Text="{Binding Email, Mode=OneWay}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="MessageLBItemTemplate">
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <StackPanel>
+                    <Rectangle  Margin="5" RadiusX="15" RadiusY="15" Width="30" Height="30">
+                        <Rectangle.Fill>
+                            <ImageBrush x:Name="statusLogo" ImageSource="{Binding AvatarBytes, Mode=OneWay}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <TextBlock HorizontalAlignment="Center"
+                               TextWrapping="Wrap"
+                               Text="{Binding Sender, Mode=OneWay}"
+                               FontWeight="Medium"
+                               Foreground="Black"/>
+                </StackPanel>
+                <Border Background="#c7edfc" BorderThickness="1" CornerRadius="5">
+                    <StackPanel>
+                        <TextBlock TextWrapping="Wrap" 
+                                   Margin="5,5,5,0" 
+                                   Text="{Binding Message, Mode=OneWay}" 
+                                   Width="500"
+                                   Foreground="Black"/>
+                        <TextBlock VerticalAlignment="Bottom" 
+                                   HorizontalAlignment="Right" 
+                                   Text="{Binding SendingDateTimeStr}" 
+                                   Margin="0,0,5,5" 
+                                   Foreground="Blue"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+
+        <Style TargetType="ListBox">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="#f5fcfe" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        
+        <Style TargetType="Grid">
+            <Setter Property="Background" Value="#f5fcfe" />
+        </Style>
+        
+        <Style x:Key="myLBStyle">
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="SkyBlue"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="SkyBlue" />
+            </Style.Resources>
+        </Style>
+
+        <Style x:Key="messageLBStyle">
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
+            </Style.Resources>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition  Width="200" MinWidth="200" MaxWidth="250"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <GridSplitter Grid.Column="1" Grid.Row="1" Width="5" HorizontalAlignment="Left" OpacityMask="White" />
+        <Menu Name="mainMenu" 
+              Height="23" 
+              Grid.Row="0" 
+              Grid.Column="0" 
+              Grid.ColumnSpan="2" 
+              HorizontalAlignment="Stretch" 
+              VerticalAlignment="Stretch">
+            <MenuItem Header="Skype">
+                <MenuItem Header="Sign out" Command="{Binding SignOutCommand}" />
+                <Separator />
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+            </MenuItem>
+        </Menu>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="110"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Grid Name="profileGrid" Grid.Row="0">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/Skype;component/Resources/Img/profile-background.png"  
+                                AlignmentX="Left" 
+                                AlignmentY="Top" 
+                                Stretch="None"/>
+                </Grid.Background>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Margin="12,0,5,0" RadiusX="25" RadiusY="25" Width="50" Height="50">
+                        <Rectangle.Fill>
+                            <ImageBrush x:Name="statusLogo" ImageSource="{Binding AvatarBytes, Mode=OneWay}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <StackPanel>
+                        <TextBlock Margin="0,50,0,0" Text="{Binding Login, Mode=OneWay}" FontWeight="Bold"/>
+                    </StackPanel>
+                </StackPanel>
+                <Line X1="0" Y1="0" X2="1" Y2="0" Stretch="Uniform" Stroke="DarkGray" VerticalAlignment="Bottom"/>
+            </Grid>
+
+            <TabControl  Background="#f5fcfe" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0">
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <Border Name="Border" BorderThickness="1,1,1,1" BorderBrush="Gainsboro" CornerRadius="4" Margin="2,0">
+                                        <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="5,2"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="LightSkyBlue" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="False">
+                                            <Setter TargetName="Border" Property="Background" Value="GhostWhite" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Resources>
+                <!--Contact section-->
+                <TabItem Name="contactTabItem" Header="CONTACTS">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="23"/>
+                        </Grid.RowDefinitions>
+                        <ListBox Grid.Row="0"
+                                 ItemContainerStyle="{StaticResource myLBStyle}"
+                                 VerticalAlignment="Stretch"
+                                 ItemTemplate="{StaticResource ContactLBItemTemplate}"
+                                 ItemsSource="{Binding Contacts}"
+                                 SelectedItem="{Binding SelectedContact, Mode=TwoWay}" />
+                        <Button Grid.Row="1"
+                                Content="REMOVE CONTACT"  
+                                Height="23" 
+                                Command="{Binding RemoveContactCommand}"/>
+                    </Grid>
+                </TabItem>
+                <!--Search section-->
+                <TabItem Header="SEARCH"  Name="searchTabItem">
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition />
+                            <RowDefinition Height="23"/>
+                        </Grid.RowDefinitions>
+                        
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="23"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Name="SearchTB" Text="{Binding SearchStr, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Grid.Column="1" Command="{Binding SearchCommand}">
+                                <Image Width="23" Source="../Resources/Img/Search-icon.png"/>
+                            </Button>
+                        </Grid>
+
+                        <ListBox ItemContainerStyle="{StaticResource myLBStyle}" 
+                                 VerticalContentAlignment="Bottom" 
+                                 Grid.Row="1" 
+                                 VerticalAlignment="Stretch" 
+                                 ItemsSource="{Binding Contacts, Mode=OneWay}" 
+                                 ItemTemplate="{StaticResource SearchLBItemTemplate}" 
+                                 SelectedItem="{Binding SelectedContact, Mode=OneWayToSource}"/>
+                        <Button Grid.Row="2" Content="REQUEST CONTACT"  Height="23" Command="{Binding RequestContactCommand}"/>
+                    </Grid>
+                </TabItem>
+                <!--Recent section-->
+                <TabItem Header="RECENT" Name="recentTabItem">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="23"/>
+                        </Grid.RowDefinitions>
+                        <ListBox ItemContainerStyle="{StaticResource myLBStyle}"
+                                 VerticalContentAlignment="Bottom" 
+                                 Grid.Row="0" 
+                                 VerticalAlignment="Stretch" 
+                                 ItemsSource="{Binding Contacts, Mode=OneWay}" 
+                                 ItemTemplate="{StaticResource SearchLBItemTemplate}" 
+                                 SelectedItem="{Binding SelectedContact, Mode=OneWayToSource}"/>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="ACCEPT"  Height="23" Command="{Binding AcceptContactCommand}"/>
+                            <Button Grid.Column="1" Content="DECLINE"  Height="23" Command="{Binding DeclineContactCommand}"/>
+                        </Grid>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+        <!--Chat section-->
+        <Grid Margin="5,0,0,0" Grid.Column="1" Grid.Row="1" Name="chatGrid" Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="82"/>
+                <RowDefinition/>
+                <RowDefinition Height="80"/>
+            </Grid.RowDefinitions>
+            <StackPanel Name="contactHeaderSP">
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Visibility="{Binding ContactHeaderVisibility, Mode=OneWay}">
+                    <Rectangle Name="headerAvatarFrame" Margin="5,5,5,5" RadiusX="35" RadiusY="35" Width="70" Height="70">
+                        <Rectangle.Fill>
+                            <ImageBrush ImageSource="{Binding SelectedContact.AvatarBytes, Mode=OneWay}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Rectangle VerticalAlignment="Bottom" 
+                               Margin="-25,0,0,5" 
+                               RadiusX="10" 
+                               RadiusY="10" 
+                               Width="20" 
+                               Height="20" 
+                               Stroke="#7DBC00" 
+                               StrokeThickness="3">
+                        <Rectangle.Fill>
+                            <ImageBrush x:Name="mainStatusLogo" ImageSource="{Binding SelectedContact.StatusLogoBytes, Mode=OneWay}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <StackPanel>
+                        <TextBlock Margin="10,10,0,0" FontSize="16" FontWeight="Medium" Text="{Binding SelectedContact.Login, Mode=OneWay}"/>
+                        <TextBlock Margin="10,0,0,0" FontSize="16" Text="{Binding SelectedContact.Email, Mode=OneWay}" />
+                    </StackPanel>
+                </StackPanel>
+                <Line X1="0" Y1="0" X2="1" Y2="0" Stretch="Uniform" Stroke="DarkGray" VerticalAlignment="Bottom"/>
+            </StackPanel>
+
+            <ListBox Grid.Row="1" 
+                     Name="messageLB" 
+                     ItemContainerStyle="{StaticResource messageLBStyle}" 
+                     VerticalAlignment="Bottom"
+                     ItemTemplate="{StaticResource MessageLBItemTemplate}" 
+                     ItemsSource="{Binding CurrentChat, Mode=OneWay}"/>
+            <TextBox 
+                     Name="messageBox"
+                     Grid.Row="2" 
+                     HorizontalAlignment="Center" 
+                     TextWrapping="Wrap" 
+                     AcceptsReturn="True" 
+                     VerticalScrollBarVisibility="Auto" 
+                     Text="{Binding MessageBody, UpdateSourceTrigger=PropertyChanged}" 
+                     VerticalAlignment="Center" 
+                     Height="70" 
+                     Width="450">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" 
+                                Command="{Binding SendCommand, UpdateSourceTrigger=PropertyChanged}" 
+                                CommandParameter="{Binding ElementName=messageLB}"/>
+                    <KeyBinding Gesture="CTRL+ENTER" 
+                                Command="{Binding NewLineCommand, UpdateSourceTrigger=PropertyChanged}"
+                                CommandParameter="{Binding ElementName=messageBox}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+        </Grid>
+    </Grid>
+</Window>
