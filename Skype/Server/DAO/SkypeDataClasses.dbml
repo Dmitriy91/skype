@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="D:\STEP ACEDAMY\C#\MYWPFPROJECTSDBOPRODUCT\SERVER\DAO\SKYPEDATABASE.MDF" Class="SkypeDataClassesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=DIMA-PC;Initial Catalog=&quot;D:\STEP ACEDAMY\C#\MYWPFPROJECTSDBOPRODUCT\SERVER\DAO\SKYPEDATABASE.MDF&quot;;Integrated Security=True" SettingsObjectName="SkypeServer.Properties.Settings" SettingsPropertyName="D__STEP_ACEDAMY_C__MYWPFPROJECTSDBOPRODUCT_SERVER_DAO_SKYPEDATABASE_MDFConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Contact" Member="Contacts">
+    <Type Name="Contact">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ContactID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="User_Contact" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.[User]" Member="Users">
     <Type Name="User">
       <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -9,13 +16,6 @@
       <Column Name="RegistrationDate" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
       <Column Name="ImageName" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
       <Association Name="User_Contact" Member="Contacts" ThisKey="UserID" OtherKey="UserID" Type="Contact" />
-    </Type>
-  </Table>
-  <Table Name="dbo.Contact" Member="Contacts">
-    <Type Name="Contact">
-      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="ContactID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Association Name="User_Contact" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Function Name="dbo.SP_User_INS" Method="SP_User_INS">

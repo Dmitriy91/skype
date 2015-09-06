@@ -52,14 +52,12 @@
     <Reference Include="Iesi.Collections">
       <HintPath>..\..\NHibernate-4.0.3.GA-bin\Required_Bins\Iesi.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="NetworkPackets">
+      <HintPath>..\NetworkPackets\bin\Debug\NetworkPackets.dll</HintPath>
+    </Reference>
     <Reference Include="NHibernate">
       <HintPath>..\..\NHibernate-4.0.3.GA-bin\Required_Bins\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="Packages, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Packages\bin\Debug\Packages.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />

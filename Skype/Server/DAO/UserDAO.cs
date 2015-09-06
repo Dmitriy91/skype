@@ -1,5 +1,4 @@
-﻿using SkypeNetLogic;
-using SkypeNetLogic.Package;
+﻿using NetworkPackets.Packet;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -7,7 +6,6 @@ using System.Data.Linq;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Media.Imaging;
 
 
 namespace SkypeServer.DAO
@@ -37,10 +35,10 @@ namespace SkypeServer.DAO
 
             if (returnedValue == 1)
             {
-                SkypeNetLogic.Model.User profile = null;
+                NetworkPackets.Model.User profile = null;
 
                 foreach (SP_AuthenticateResult user in authenticationResult)
-                    profile = new SkypeNetLogic.Model.User 
+                    profile = new NetworkPackets.Model.User 
                     { 
                         Id = user.UserID, 
                         Login = user.Login, 
@@ -83,15 +81,15 @@ namespace SkypeServer.DAO
             return registrationResponse;
         }
 
-        public static List<SkypeNetLogic.Model.User> GetContactListByUserID(int userID)
+        public static List<NetworkPackets.Model.User> GetContactListByUserID(int userID)
         {
             SkypeDataClassesDataContext sdc = new SkypeDataClassesDataContext();
             ISingleResult<SP_ContactList_SEL_byUserIDResult> contacts = sdc.SP_ContactList_SEL_byUserID(userID);
-            List<SkypeNetLogic.Model.User> contactList = new List<SkypeNetLogic.Model.User>();
+            List<NetworkPackets.Model.User> contactList = new List<NetworkPackets.Model.User>();
 
             foreach (SP_ContactList_SEL_byUserIDResult contact in contacts)
             {
-                contactList.Add(new SkypeNetLogic.Model.User 
+                contactList.Add(new NetworkPackets.Model.User 
                 { 
                     Id = contact.UserID, 
                     Login = contact.Login, 
@@ -103,14 +101,14 @@ namespace SkypeServer.DAO
             return contactList;
         }
 
-        public static SkypeNetLogic.Model.User GetContactByUserID(int userID)
+        public static NetworkPackets.Model.User GetContactByUserID(int userID)
         {
             SkypeDataClassesDataContext sdc = new SkypeDataClassesDataContext();
             ISingleResult<SP_Contact_SEL_byUserIDResult> contacts = sdc.SP_Contact_SEL_byUserID(userID);
 
             foreach (SP_Contact_SEL_byUserIDResult contact in contacts)
             {
-                return new SkypeNetLogic.Model.User 
+                return new NetworkPackets.Model.User 
                 { 
                     Id = contact.UserID, 
                     Login = contact.Login, 
@@ -130,7 +128,7 @@ namespace SkypeServer.DAO
 
             foreach (SP_Contact_SEL_byLoginResult contact in contacts)
             {
-                searchResponse.ContactList.Add(new SkypeNetLogic.Model.User 
+                searchResponse.ContactList.Add(new NetworkPackets.Model.User 
                 {
                     Id = contact.UserID, 
                     Login = contact.Login, 

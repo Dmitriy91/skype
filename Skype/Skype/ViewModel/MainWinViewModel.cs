@@ -1,7 +1,7 @@
 ﻿using Skype.Model;
 using Skype.Resources.Model;
-using SkypeNetLogic.Model;
-using SkypeNetLogic.Package;
+using NetworkPackets.Model;
+using NetworkPackets.Packet;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -60,7 +60,7 @@ namespace Skype.ViewModel
         {
             ContactSectionViewModel.ProcessOnlineContact(contactIsOnline);
         }
-        public void LoadProfile(SkypeNetLogic.Model.User user)
+        public void LoadProfile(NetworkPackets.Model.User user)
         {
             ProfileSectionViewModel.LoadProfile(user);
         }

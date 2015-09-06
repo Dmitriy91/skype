@@ -1,8 +1,7 @@
 ﻿using Client;
 using MicroMvvm;
+using NetworkPackets.Packet;
 using Skype.View;
-using SkypeNetLogic.Enum;
-using SkypeNetLogic.Package;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -158,7 +157,7 @@ namespace Skype.ViewModel
 
             ar.Login = Login;
             ar.Password = System.Text.Encoding.UTF8.GetString(hash);
-            AsynchronousClientSocket.Send(ar.CreateTransferablePackage());
+            AsynchronousClientSocket.Send(ar.CreateTransferablePacket());
         }
         private bool CanExecuteSubmitCommand()
         {

@@ -2,8 +2,8 @@
 using MicroMvvm;
 using Skype.Model;
 using Skype.Resources.Model;
-using SkypeNetLogic.Enum;
-using SkypeNetLogic.Package;
+using NetworkPackets.Enum;
+using NetworkPackets.Packet;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

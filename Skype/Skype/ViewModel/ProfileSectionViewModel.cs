@@ -56,7 +56,7 @@ namespace Skype.ViewModel
         #endregion
 
         #region Methods
-        public void LoadProfile(SkypeNetLogic.Model.User user)
+        public void LoadProfile(NetworkPackets.Model.User user)
         {
             Login = user.Login;
             Email = user.Email;

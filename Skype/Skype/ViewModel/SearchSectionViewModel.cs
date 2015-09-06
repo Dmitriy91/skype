@@ -2,14 +2,13 @@
 using MicroMvvm;
 using Skype.Model;
 using Skype.Resources.Model;
-using SkypeNetLogic.Enum;
-using SkypeNetLogic.Package;
+using NetworkPackets.Enum;
+using NetworkPackets.Packet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
-
 namespace Skype.ViewModel
 {
     public class SearchSectionViewModel : BaseViewModel
@@ -84,7 +83,7 @@ namespace Skype.ViewModel
             contactRequest.ContactID = SelectedContact.Id;
             Contacts.Remove(SelectedContact);
             SelectedContact = null;
-            AsynchronousClientSocket.Send(contactRequest.CreateTransferablePackage());
+            AsynchronousClientSocket.Send(contactRequest.CreateTransferablePacket());
         }
         bool CanExecuteRequestContactCommand()
         {
@@ -114,7 +113,7 @@ namespace Skype.ViewModel
             SearchRequest searchRequest = new SearchRequest();
             
             searchRequest.SearchStr = SearchStr;
-            AsynchronousClientSocket.Send(searchRequest.CreateTransferablePackage());
+            AsynchronousClientSocket.Send(searchRequest.CreateTransferablePacket());
         }
         bool CanExecuteSearchCommand()
         {

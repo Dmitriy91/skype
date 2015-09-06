@@ -8,11 +8,12 @@ using System.Net;
 using System.Threading.Tasks;
 using System.IO;
 using System.Configuration;
-using SkypeNetLogic;
 using System.Windows.Forms;
 using SkypeServer.DAO;
-using SkypeNetLogic.Enum;
-using SkypeNetLogic.Package;
+using NetworkPackets.Enum;
+using NetworkPackets.Packet;
+
+
 
 namespace SkypeServer.BO
 {
@@ -21,7 +22,7 @@ namespace SkypeServer.BO
         private static Dictionary<Socket, int> _clientSocketDictionary = new Dictionary<Socket, int>();
         private static Socket _serverSocket;
         private static AutoResetEvent _exit = new AutoResetEvent(false);
-        private static List<SkypeNetLogic.Package.Message> _unsentMessages = new List<SkypeNetLogic.Package.Message>();
+        private static List<NetworkPackets.Packet.Message> _unsentMessages = new List<NetworkPackets.Packet.Message>();
 
         public static void StartListening()
         {
@@ -69,25 +70,25 @@ namespace SkypeServer.BO
             MemoryStream stream = new MemoryStream();
             const int BufferSize = 8192;
             byte[] buffer = new byte[BufferSize];
-            bool newPackage = true;
+            bool newPacket = true;
             int receivedBytes = 0;
             int unreceivedBytes = 0;
-            PackageType packageType = PackageType.None;
+            PacketType PacketType = PacketType.None;
 
             try
             {
                 while (true)
                 {
-                    if (newPackage)
+                    if (newPacket)
                     {
                         receivedBytes = clientSocket.Receive(buffer, BufferSize, SocketFlags.None);
-                        packageType = (PackageType)BitConverter.ToInt32(buffer, 0);
+                        PacketType = (PacketType)BitConverter.ToInt32(buffer, 0);
                         unreceivedBytes = BitConverter.ToInt32(buffer, 4);
                         receivedBytes -= 8;
                         unreceivedBytes -= receivedBytes;
                         stream.Position = 0;
                         stream.Write(buffer, 8, receivedBytes);
-                        newPackage = false;
+                        newPacket = false;
                     }
                     else
                     {
@@ -100,10 +101,10 @@ namespace SkypeServer.BO
                     {
                         Task.Factory.StartNew(() =>
                         {
-                            ProcessPacket(clientSocket, packageType, new MemoryStream(stream.ToArray()));
+                            ProcessPacket(clientSocket, PacketType, new MemoryStream(stream.ToArray()));
                         });
 
-                        newPackage = true;
+                        newPacket = true;
                     }
                 }
             }
@@ -129,7 +130,7 @@ namespace SkypeServer.BO
                         
                         if (recipientSocket != null)
                         {
-                            data = contactIsOffline.CreateTransferablePackage();
+                            data = contactIsOffline.CreateTransferablePacket();
                             Task.Factory.StartNew(() => 
                             {
                                 Send(recipientSocket, data); 
@@ -142,13 +143,13 @@ namespace SkypeServer.BO
                 Console.WriteLine(e.ToString());
             }
         }
-        private static void ProcessPacket(Socket clientSocket, PackageType packageType, Stream stream)
+        private static void ProcessPacket(Socket clientSocket, PacketType PacketType, Stream stream)
         {
-            switch (packageType)
+            switch (PacketType)
             {
-                case PackageType.Message:
+                case PacketType.Message:
                     {
-                        SkypeNetLogic.Package.Message msg = SkypeNetLogic.Package.Message.Deserialize<SkypeNetLogic.Package.Message>(stream, true);
+                        NetworkPackets.Packet.Message msg = NetworkPackets.Packet.Message.Deserialize<NetworkPackets.Packet.Message>(stream, true);
 
                         if (msg != null)
                         {
@@ -162,7 +163,7 @@ namespace SkypeServer.BO
 
                                     if (recipientSocket != null)
                                     {
-                                        Send(recipientSocket, msg.CreateTransferablePackage());
+                                        Send(recipientSocket, msg.CreateTransferablePacket());
                                     }
                                     else
                                     {
@@ -181,7 +182,7 @@ namespace SkypeServer.BO
                         }
                     }
                     break;
-                case PackageType.AuthenticationRequest:
+                case PacketType.AuthenticationRequest:
                     {
                         AuthenticationRequest authentication = AuthenticationRequest.Deserialize<AuthenticationRequest>(stream, true);
 
@@ -193,7 +194,7 @@ namespace SkypeServer.BO
                             {
                                 ContactIsOnline contactIsOnline = new ContactIsOnline();
                                 contactIsOnline.ContactID = ar.Profile.Id;
-                                byte[] byteArr = contactIsOnline.CreateTransferablePackage();
+                                byte[] byteArr = contactIsOnline.CreateTransferablePacket();
                                 Socket recipientSocket = null;
 
                                 lock (_clientSocketDictionary) 
@@ -222,15 +223,15 @@ namespace SkypeServer.BO
 
                                 try
                                 {
-                                    ar.UnreceivedMessages = new List<SkypeNetLogic.Package.Message>();
-                                    foreach (SkypeNetLogic.Package.Message msg in _unsentMessages)
+                                    ar.UnreceivedMessages = new List<NetworkPackets.Packet.Message>();
+                                    foreach (NetworkPackets.Packet.Message msg in _unsentMessages)
                                     {
                                         if (msg.RecipientID == clientID)
                                             ar.UnreceivedMessages.Add(msg);
-                                            //Send(clientSocket, PackageHelper.Serialize(PackageType.Message, msg));
+                                            //Send(clientSocket, PacketHelper.Serialize(PacketType.Message, msg));
                                     }
 
-                                    Send(clientSocket, ar.CreateTransferablePackage());
+                                    Send(clientSocket, ar.CreateTransferablePacket());
 
                                     lock (_unsentMessages)
                                     {
@@ -248,7 +249,7 @@ namespace SkypeServer.BO
                             }
                             else
                             {
-                                Send(clientSocket, ar.CreateTransferablePackage());
+                                Send(clientSocket, ar.CreateTransferablePacket());
                                 Console.WriteLine("Invalid password or login!");
                             }
                         }
@@ -258,9 +259,9 @@ namespace SkypeServer.BO
                         }
                     }
                     break;
-                case PackageType.RegistrationRequest:
+                case PacketType.RegistrationRequest:
                     {
-                        RegistrationRequest registrationRequest = Package.Deserialize<RegistrationRequest>(stream, true);
+                        RegistrationRequest registrationRequest = Packet.Deserialize<RegistrationRequest>(stream, true);
 
                         if (registrationRequest != null)
                         {
@@ -273,7 +274,7 @@ namespace SkypeServer.BO
                             }
 
                             RegistrationResponse registrationResponse = UserDAO.Register(registrationRequest.Login, registrationRequest.Password, registrationRequest.Email, newImgName);
-                            byte[] bytyData = registrationResponse.CreateTransferablePackage();
+                            byte[] bytyData = registrationResponse.CreateTransferablePacket();
                             
                             Send(clientSocket, bytyData);
                         }
@@ -283,9 +284,9 @@ namespace SkypeServer.BO
                         }
                     }
                     break;
-                case PackageType.SearchRequest:
+                case PacketType.SearchRequest:
                     {
-                        SearchRequest searchRequest = Package.Deserialize<SearchRequest>(stream, true);
+                        SearchRequest searchRequest = Packet.Deserialize<SearchRequest>(stream, true);
 
                         if (searchRequest != null)
                         {
@@ -293,13 +294,8 @@ namespace SkypeServer.BO
                             int requesterID = _clientSocketDictionary[clientSocket];
                             byte[] byteData = null;
 
-                            searchResponse.ContactList.Remove(new SkypeNetLogic.Model.User() { Id = requesterID }); // Removing requester from search result
-                            //searchResponse.ContactList.ForEach((i) =>
-                            //{
-                            //    if (_clientSocketDictionary.ContainsValue(i.Id))
-                            //        i.IsOnline = true;
-                            //});
-                            byteData = searchResponse.CreateTransferablePackage();
+                            searchResponse.ContactList.Remove(new NetworkPackets.Model.User() { Id = requesterID }); // Removing requester from search result
+                            byteData = searchResponse.CreateTransferablePacket();
                             Send(clientSocket, byteData);
                         }
                         else
@@ -308,9 +304,9 @@ namespace SkypeServer.BO
                         }
                     }
                     break;
-                case PackageType.ContactRequest:
+                case PacketType.ContactRequest:
                     {
-                        ContactRequest contactRequest = Package.Deserialize<ContactRequest>(stream, true);
+                        ContactRequest contactRequest = Packet.Deserialize<ContactRequest>(stream, true);
 
                         if (contactRequest != null)
                         {
@@ -322,7 +318,7 @@ namespace SkypeServer.BO
                                 clientID = _clientSocketDictionary[clientSocket];
                             }
 
-                            SkypeNetLogic.Model.User contact = UserDAO.GetContactByUserID(clientID);
+                            NetworkPackets.Model.User contact = UserDAO.GetContactByUserID(clientID);
 
                             if (contact != null)
                             {
@@ -340,7 +336,7 @@ namespace SkypeServer.BO
 
                                     if (recipientSocket != null)
                                     {
-                                        Send(recipientSocket, contactResponse.CreateTransferablePackage());
+                                        Send(recipientSocket, contactResponse.CreateTransferablePacket());
                                     }
                                 }
                             }
@@ -355,9 +351,9 @@ namespace SkypeServer.BO
                         }
                     }
                     break;
-                case PackageType.AddingContact:
+                case PacketType.AddingContact:
                     {
-                        AddingContact addingContact = Package.Deserialize<AddingContact>(stream, true);
+                        AddingContact addingContact = Packet.Deserialize<AddingContact>(stream, true);
 
                         if (addingContact != null)
                         {
@@ -372,7 +368,7 @@ namespace SkypeServer.BO
 
                             if (UserDAO.AddContact(clientID, addingContact.ContactID) && UserDAO.AddContact(addingContact.ContactID, clientID))
                             {
-                                SkypeNetLogic.Model.User contact = UserDAO.GetContactByUserID(clientID);
+                                NetworkPackets.Model.User contact = UserDAO.GetContactByUserID(clientID);
 
                                 if (contact != null)
                                 {
@@ -390,7 +386,7 @@ namespace SkypeServer.BO
 
                                         if (recipientSocket != null)
                                         {
-                                            Send(recipientSocket, newContact.CreateTransferablePackage());
+                                            Send(recipientSocket, newContact.CreateTransferablePacket());
                                         }
                                     }
                                 }
@@ -406,9 +402,9 @@ namespace SkypeServer.BO
                         }
                     }
                     break;
-                case PackageType.RemovingContactRequest:
+                case PacketType.RemovingContactRequest:
                     {
-                        RemovingContactRequest removingContactRequest = Package.Deserialize<RemovingContactRequest>(stream, true);
+                        RemovingContactRequest removingContactRequest = Packet.Deserialize<RemovingContactRequest>(stream, true);
 
                         if (removingContactRequest != null)
                         {
@@ -435,7 +431,7 @@ namespace SkypeServer.BO
                                         RemovingContactResponse removingContactResponse = new RemovingContactResponse();
 
                                         removingContactResponse.ContactID = removingContactRequest.SenderID;
-                                        Send(recipientSocket, removingContactResponse.CreateTransferablePackage());
+                                        Send(recipientSocket, removingContactResponse.CreateTransferablePacket());
                                     }
                                 }
                             }

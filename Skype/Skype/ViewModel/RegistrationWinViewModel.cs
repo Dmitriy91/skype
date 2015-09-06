@@ -10,9 +10,9 @@ using System.Windows;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using Skype.View;
-using SkypeNetLogic.Package;
+using NetworkPackets.Packet;
 using Client;
-using SkypeNetLogic.Enum;
+using NetworkPackets.Enum;
 using Microsoft.Win32;
 using System.IO;
 using System.Security.Cryptography;
@@ -295,7 +295,7 @@ namespace Skype.ViewModel
             if (_defaultAvatar == false)
                 registrationRequest.ImageBytes = AvatarBytes;
 
-            AsynchronousClientSocket.Send(registrationRequest.CreateTransferablePackage());
+            AsynchronousClientSocket.Send(registrationRequest.CreateTransferablePacket());
         }
         private bool CanExecuteSubmitCommand()
         {

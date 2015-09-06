@@ -7,15 +7,14 @@ using System.Threading;
 using System.Net;
 using System.Threading.Tasks;
 using System.IO;
-using SkypeNetLogic;
-using SkypeNetLogic.Enum;
-using SkypeNetLogic.Package;
 using System.Configuration;
 using Skype.View;
 using Skype.ViewModel;
 using Skype.Model;
 using System.Windows;
 using Skype;
+using NetworkPackets.Enum;
+using NetworkPackets.Packet;
 
 namespace Client
 {
@@ -82,25 +81,25 @@ namespace Client
             MemoryStream stream = new MemoryStream();
             const int BufferSize = 8192;
             byte[] buffer = new byte[BufferSize];
-            bool newPackage = true;
+            bool newPacket = true;
             int receivedBytes = 0;
             int unreceivedBytes = 0;
-            PackageType packageType = PackageType.None;
+            PacketType PacketType = PacketType.None;
 
             try
             {
                 while (true)
                 {
-                    if (newPackage)
+                    if (newPacket)
                     {
                         receivedBytes = _clientSocket.Receive(buffer, BufferSize, SocketFlags.None);
-                        packageType = (PackageType)BitConverter.ToInt32(buffer, 0);
+                        PacketType = (PacketType)BitConverter.ToInt32(buffer, 0);
                         unreceivedBytes = BitConverter.ToInt32(buffer, 4);
                         receivedBytes -= 8;
                         unreceivedBytes -= receivedBytes;
                         stream.Position = 0;
                         stream.Write(buffer, 8, receivedBytes);
-                        newPackage = false;
+                        newPacket = false;
                     }
                     else
                     {
@@ -113,26 +112,25 @@ namespace Client
                     {
                         Task.Factory.StartNew(() =>
                         {
-                            ProcessPacket(packageType, new MemoryStream(stream.ToArray()));
+                            ProcessPacket(PacketType, new MemoryStream(stream.ToArray()));
                         });
 
-                        newPackage = true;
+                        newPacket = true;
                     }
                 }
             }
             catch (Exception e)
             {
                 stream.Close();
-                //MessageBox.Show(e.ToString(), "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private static void ProcessPacket(PackageType packageType, Stream stream)
+        private static void ProcessPacket(PacketType PacketType, Stream stream)
         {
-            switch (packageType)
+            switch (PacketType)
             {
-                case PackageType.Message:
+                case PacketType.Message:
                     {
-                        Message msg = Package.Deserialize<Message>(stream, true);
+                        Message msg = Packet.Deserialize<Message>(stream, true);
 
                         if (msg != null)
                         {
@@ -147,9 +145,9 @@ namespace Client
                         }
                     }
                     break;
-                case PackageType.AuthenticationResponse:
+                case PacketType.AuthenticationResponse:
                     {
-                        AuthenticationResponse ar = Package.Deserialize<AuthenticationResponse>(stream, true);
+                        AuthenticationResponse ar = Packet.Deserialize<AuthenticationResponse>(stream, true);
 
                         if (ar != null)
                         {
@@ -164,9 +162,9 @@ namespace Client
                         }
                     }
                     break;
-                case PackageType.RegistrationResponse:
+                case PacketType.RegistrationResponse:
                     {
-                        RegistrationResponse registrationResponse = Package.Deserialize<RegistrationResponse>(stream, true);
+                        RegistrationResponse registrationResponse = Packet.Deserialize<RegistrationResponse>(stream, true);
 
                         if (registrationResponse != null)
                         {
@@ -181,9 +179,9 @@ namespace Client
                         }
                     }
                     break;
-                case PackageType.SearchResponse:
+                case PacketType.SearchResponse:
                     {
-                        SearchResponse searchResponse = Package.Deserialize<SearchResponse>(stream, true);
+                        SearchResponse searchResponse = Packet.Deserialize<SearchResponse>(stream, true);
                         if (searchResponse != null)
                         {
                             if (MainWinViewModel.CurrentViewModel != null)
@@ -197,9 +195,9 @@ namespace Client
                         }
                     }
                     break;
-                case PackageType.ContactResponse:
+                case PacketType.ContactResponse:
                     {
-                        ContactResponse contactResponse = Package.Deserialize<ContactResponse>(stream, true);
+                        ContactResponse contactResponse = Packet.Deserialize<ContactResponse>(stream, true);
 
                         if (contactResponse != null)
                         {
@@ -211,9 +209,9 @@ namespace Client
                         }
                     }
                     break;
-                case PackageType.NewContact:
+                case PacketType.NewContact:
                     {
-                        NewContact newContact = Package.Deserialize<NewContact>(stream, true);
+                        NewContact newContact = Packet.Deserialize<NewContact>(stream, true);
 
                         if (newContact != null)
                         {
@@ -225,9 +223,9 @@ namespace Client
                         }
                     }
                     break;
-                case PackageType.ContactIsOffline:
+                case PacketType.ContactIsOffline:
                     {
-                        ContactIsOffline contactIsOffline = Package.Deserialize<ContactIsOffline>(stream, true);
+                        ContactIsOffline contactIsOffline = Packet.Deserialize<ContactIsOffline>(stream, true);
 
                         if (contactIsOffline != null)
                         {
@@ -239,9 +237,9 @@ namespace Client
                         }
                     }
                     break;
-                case PackageType.ContactIsOnline:
+                case PacketType.ContactIsOnline:
                     {
-                        ContactIsOnline contactIsOnline = Package.Deserialize<ContactIsOnline>(stream, true);
+                        ContactIsOnline contactIsOnline = Packet.Deserialize<ContactIsOnline>(stream, true);
 
                         if (contactIsOnline != null)
                         {
@@ -253,9 +251,9 @@ namespace Client
                         }
                     }
                     break;
-                case PackageType.RemovingContactResponse:
+                case PacketType.RemovingContactResponse:
                     {
-                        RemovingContactResponse removingContactResponse = Package.Deserialize<RemovingContactResponse>(stream, true);
+                        RemovingContactResponse removingContactResponse = Packet.Deserialize<RemovingContactResponse>(stream, true);
 
                         if (removingContactResponse != null)
                         {

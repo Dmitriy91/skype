@@ -2,8 +2,8 @@
 using MicroMvvm;
 using Skype.Model;
 using Skype.Resources.Model;
-using SkypeNetLogic.Enum;
-using SkypeNetLogic.Package;
+using NetworkPackets.Enum;
+using NetworkPackets.Packet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +57,7 @@ namespace Skype.ViewModel
             Contacts.Remove(acceptedContact);
             _contactSectionViewModel.Contacts.Add(acceptedContact);
             addingContact.ContactID = acceptedContact.Id;
-            AsynchronousClientSocket.Send(addingContact.CreateTransferablePackage());
+            AsynchronousClientSocket.Send(addingContact.CreateTransferablePacket());
         }
         private bool CanExecuteAcceptContactCommand()
         {

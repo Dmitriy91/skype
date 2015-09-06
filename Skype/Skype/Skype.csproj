@@ -60,9 +60,8 @@
     <Reference Include="MicroMvvm">
       <HintPath>..\..\MvvmExample\MicroMvvm\bin\Debug\MicroMvvm.dll</HintPath>
     </Reference>
-    <Reference Include="Packages, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Packages\bin\Debug\Packages.dll</HintPath>
+    <Reference Include="NetworkPackets">
+      <HintPath>..\NetworkPackets\bin\Debug\NetworkPackets.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />

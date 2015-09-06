@@ -9,13 +9,12 @@ using System.Windows.Input;
 using MicroMvvm;
 using System.Windows.Media.Imaging;
 using System.Windows;
-using SkypeNetLogic.Package;
-using SkypeNetLogic.Model;
-using SkypeNetLogic.Enum;
 using Client;
 using Skype.Resources.Model;
 using System.Windows.Controls;
 using System.Threading;
+using NetworkPackets.Packet;
+using NetworkPackets.Model;
 
 namespace Skype.ViewModel
 {
@@ -162,7 +161,7 @@ namespace Skype.ViewModel
                 SendingDateTime = DateTime.Now
             };
 
-            AsynchronousClientSocket.Send(message.CreateTransferablePackage());
+            AsynchronousClientSocket.Send(message.CreateTransferablePacket());
             MessageBody = string.Empty;
 
             lock (_lock)
@@ -216,7 +215,7 @@ namespace Skype.ViewModel
                     {
                         ContactID = removedContact.Id
                     };
-                    AsynchronousClientSocket.Send(RemovingContactRequest.CreateTransferablePackage());
+                    AsynchronousClientSocket.Send(RemovingContactRequest.CreateTransferablePacket());
                 }
             }
         }

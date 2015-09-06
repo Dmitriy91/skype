@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using SkypeNetLogic;
 using System.IO;
 
 namespace SkypeServer
